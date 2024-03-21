@@ -1,18 +1,12 @@
-const { isRoomReserved } = require('../controllers/ReservationController');
+const express = require('express');
+const router = express.Router();
+const reservationController = require('../controllers/reservationController');
+const authenticate = require('../middlewares/authenticate');
+const isReserved = require('../services/reserveCheck');
 
-router.post('/create', async (req, res) => {
-    try {
-        const { roomId, startTime, endTime } = req.body;
 
-        // Check if the room is already reserved for the requested time slot
-        const roomReserved = await isRoomReserved(roomId, startTime, endTime);
-        if (roomReserved) {
-            return res.status(400).json({ message: 'Room already reserved for the requested time slot' });
-        }
+router.post('/create', authenticate, isReserved, reservationController.createReservation);
+router.put('/update', authenticate, reservationController.updateReservation);
+router.delete('/delete', authenticate, reservationController.deleteReservation);
 
-        // Proceed with creating the reservation
-        // Logic to create a reservation
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+module.exports = router;

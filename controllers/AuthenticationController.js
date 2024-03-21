@@ -1,22 +1,30 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const User = require('../models/userModel');
+const validateUser = require('../middlewares/validate');
 
-exports.signup = async (req, res) => {
+// signup controller function to create a new user and check if the username already exists
+const signup = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ username, password: hashedPassword });
-        res.status(201).json({ message: 'User created successfully', user });
-    } catch (error) {
+        const userExists = await User.findOne({ username });
+        if (userExists) {
+            return res.status(409).json({ message: 'Username already exists' });
+        }
+        const user = new User({ username, password });
+        await user.save();
+        res.status(201).json({ message: 'User created successfully' });
+    }
+    catch (error) {
         res.status(500).json({ error: error.message });
     }
-};
+}
 
-exports.login = async (req, res) => {
+// login controller function to authenticate a user
+const login = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const user = await User.findOne({ username }); 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -24,9 +32,11 @@ exports.login = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY , { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '1h' });
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
+module.exports = { signup, login };

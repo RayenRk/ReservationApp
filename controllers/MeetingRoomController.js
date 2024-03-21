@@ -1,4 +1,4 @@
-const MeetingRoom = require('../models/MeetingRoom');
+const MeetingRoom = require('../models/meetingRoomModel');
 
 exports.getAllRooms = async (req, res) => {
     try {

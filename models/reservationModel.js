@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const reservationSchema = new mongoose.Schema({
-    room: {
+    meetingroom: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MeetingRoom',
         required: true

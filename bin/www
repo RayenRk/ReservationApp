@@ -8,12 +8,14 @@ const app = require('../app');
 const debug = require('debug')('reservationapp:server');
 const http = require('http');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 
 /**
  * Get port from environment and store in Express.
  */
 
 dotenv.config();
+const MONGODB_URI = process.env.MONGODB_URI;
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
@@ -27,10 +29,17 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-console.log(`Server started on http://localhost:${port}`) ;
+mongoose.connect(MONGODB_URI).then(() => {
+  console.log('Connected to the database');
+  server.listen(port, () => {
+    console.log(`Server is running on port: http://localhost:${port}`);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  });
+} ).catch((error) => {
+  console.log('Error connecting to the database', error);
+}
+);
 
 /**
  * Normalize a port into a number, string, or false.
