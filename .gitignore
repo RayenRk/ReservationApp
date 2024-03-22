@@ -1,5 +1,5 @@
 **/node_modules/*
 **/.vscode/*
 .env
-.end.dev
+.env.dev
 .env.prod
