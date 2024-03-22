@@ -4,8 +4,9 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const indexRouter = require('./routes/index');
-const reservationRouter = require('./routes/reservation.route');
+const reservationRouter = require('./routes/reservation');
 const auth = require('./routes/auth');
+const room = require('./routes/rooms');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api/reservations', reservationRouter);
 app.use('/api/auth', auth);
+app.use('/api/rooms', room);
 
 
 // catch 404 and forward to error handler

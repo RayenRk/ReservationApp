@@ -1,11 +1,15 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
-const validateUser = require('../middlewares/validate');
+const schemaValidation = require('../middlewares/validate');
 
 // signup controller function to create a new user and check if the username already exists
 const signup = async (req, res) => {
     try {
+        const { error } = schemaValidation.schemaValidation.validate(req.body);
+        if (error) {
+            return res.status(400).json({ message: error.details[0].message });
+        }
         const { username, password } = req.body;
         const userExists = await User.findOne({ username });
         if (userExists) {

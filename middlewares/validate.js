@@ -1,16 +1,19 @@
 const Joi = require('joi');
 
-const validateUser = (req, res, next) => {
-    const schema = Joi.object({
-        username: Joi.string().alphanum().min(3).max(30).required(),
-        password: Joi.string().required()
-    });
+const schemaValidation = Joi.object({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    password: Joi.string().required(),
+});
 
-    const { error } = schema.validate(req.body);
-    if (error) {
-        return res.status(400).json({ error: error.details[0].message });
-    }
-    next();
+const schemaRoom = Joi.object({
+    name: Joi.string().required(),
+    capacity: Joi.number().required(),
+    equipment: Joi.array().items(Joi.string()).required(),
+    availability: Joi.boolean().required(),
+});
+
+module.exports = {
+    schemaValidation,
+    schemaRoom,
+    
 };
-
-module.exports = validateUser;

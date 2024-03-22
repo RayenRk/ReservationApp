@@ -1,8 +1,32 @@
 const Reservation = require('../models/reservationModel');
+const mongoose = require('mongoose');
 
 const createReservation = async (req, res) => {
     try {
-        // Logic to create a reservation
+        const reservation = await Reservation.create(req.body);
+        res.status(201).json(reservation);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getAllReservations = async (req, res) => {
+    try {
+        const reservations = await Reservation.find().populate('room').populate('user');
+        res.status(200).json(reservations);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getReservationById = async (req, res) => {
+    try {
+        const reservationId = req.params.id;
+        const reservation = await Reservation.findById(reservationId).populate('room').populate('user');
+        if (!reservation) {
+            return res.status(404).json({ message: 'Reservation not found' });
+        }
+        res.status(200).json(reservation);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -10,7 +34,13 @@ const createReservation = async (req, res) => {
 
 const updateReservation = async (req, res) => {
     try {
-        // Logic to update a reservation
+        const reservationId = req.params.id;
+        const updatedReservation = req.body;
+        const reservation = await Reservation.findByIdAndUpdate(reservationId, updatedReservation, { new: true });
+        if (!reservation) {
+            return res.status(404).json({ message: 'Reservation not found' });
+        }
+        res.status(200).json(reservation);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -18,7 +48,12 @@ const updateReservation = async (req, res) => {
 
 const deleteReservation = async (req, res) => {
     try {
-        // Logic to delete a reservation
+        const reservationId = req.params.id;
+        const reservation = await Reservation.findByIdAndDelete(reservationId);
+        if (!reservation) {
+            return res.status(404).json({ message: 'Reservation not found' });
+        }
+        res.status(200).json({ message: 'Reservation deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -43,6 +78,8 @@ const isRoomReserved = async (roomId, startTime, endTime) => {
 };
 
 module.exports = {
+    getAllReservations,
+    getReservationById,
     createReservation,
     updateReservation,
     deleteReservation,
