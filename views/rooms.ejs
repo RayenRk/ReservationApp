@@ -1,0 +1,14 @@
+<% extend ('layout') %>
+<body>
+    <ul>
+        <% rooms.forEach(room => { %>
+            <li>
+                <h2><%= room.name %></h2>
+                <p>Capacity: <%= room.capacity %></p>
+                <p>Equipments: <%= room.equipments %></p>
+                <p>Availability: <%= room.availability ? 'Available' : 'Not Available' %></p>
+            </li>
+        <% }); %>
+    </ul>
+    <a href="/">Back to Homepage</a>
+</body>

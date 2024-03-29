@@ -6,7 +6,7 @@ const { createMeetingRoom, getAllMeetingRooms, getMeetingRoomById, updateMeeting
 
 // Create a new meeting room
 router.post('/add', authenticate, createMeetingRoom);
-router.get('/all', authenticate, getAllMeetingRooms);
+router.get('/', authenticate, getAllMeetingRooms);
 router.get('/:id', authenticate, getMeetingRoomById);
 router.put('/update/:id', authenticate, isRoomReserved, updateMeetingRoomById);
 router.delete('/delete/:id', authenticate, isRoomReserved, deleteMeetingRoomById);

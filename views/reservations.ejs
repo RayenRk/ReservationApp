@@ -1,0 +1,14 @@
+<% extend ('layout') %>
+<body>
+    <ul>
+        <% reservations.forEach(reservations => { %>
+            <li>
+                <p>Meeting Room: <%= reservations.meetingroom.name %></p>
+                <p>User: <%= reservations.user.username %></p>
+                <p>Start Time: <%= reservations.startTime %></p>
+                <p>End Time: <%= reservations.endTime %> </p>
+            </li>
+        <% }); %>
+    </ul>
+    <a href="/">Back to Homepage</a>
+</body>

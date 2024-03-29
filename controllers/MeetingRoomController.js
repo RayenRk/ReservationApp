@@ -26,6 +26,7 @@ const getAllMeetingRooms = async (req, res) => {
     try {
         const meetingRooms = await MeetingRoom.find();
         res.status(200).json(meetingRooms);
+        //res.render("rooms", { rooms: meetingRooms });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
