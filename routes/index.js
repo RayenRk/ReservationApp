@@ -1,5 +1,5 @@
 const express = require('express');
-const MeetingRoom = require('../models/meetingRoomModel');
+const MeetingRoom = require('../models/roomsModel');
 const Reservation = require('../models/reservationModel');
 const router = express.Router();
 

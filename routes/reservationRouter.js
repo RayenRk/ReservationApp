@@ -4,7 +4,7 @@ const { getAllReservations, getReservationById, createReservation, updateReserva
 //,Notification
 const authenticate = require('../middlewares/authenticate');
 
-router.post('/create', authenticate, createReservation);
+router.post('/create/:roomID', authenticate, createReservation);
 router.patch('/update/:id', authenticate, updateReservation);
 router.delete('/delete/:id', authenticate, deleteReservation);
 router.get('/all', authenticate, getAllReservations);

@@ -9,7 +9,7 @@ const schemaValidation = Joi.object({
 const schemaRoom = Joi.object({
     name: Joi.string().required(),
     capacity: Joi.number().required(),
-    equipment: Joi.array().items(Joi.string()).required(),
+    equipment: Joi.string().required(),
     availability: Joi.boolean().required(),
 });
 
