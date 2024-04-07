@@ -1,10 +1,10 @@
-const MeetingRoom = require('../models/meetingRoomModel');
-const schemaRoom = require('../middlewares/validate');
+const MeetingRoom = require('../models/roomsModel');
+const validatorRoom = require('../middlewares/validate');
 
 // Create a new meeting room
 const createMeetingRoom = async (req, res) => {
     try {
-        const { error } = schemaRoom.schemaRoom.validate(req.body);
+        const { error } = validatorRoom.schemaRoom.validate(req.body);
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
         }
@@ -13,8 +13,8 @@ const createMeetingRoom = async (req, res) => {
         if (roomExists) {
             return res.status(409).json({ message: 'Room already exists' });
         }
-        const { name, capacity,equipments,  availability } = req.body; //
-        const newMeetingRoom = await MeetingRoom.create({ name, capacity, equipments, availability }); // 
+        const { name, capacity,equipment,  availability } = req.body; //
+        const newMeetingRoom = await MeetingRoom.create({ name, capacity, equipment, availability }); //
         res.status(201).json(newMeetingRoom);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -50,8 +50,12 @@ const getMeetingRoomById = async (req, res) => {
 const updateMeetingRoomById = async (req, res) => {
     try {
         const roomId = req.params.id;
-        const { name, capacity, equipments, availability } = req.body;
-        const updatedMeetingRoom = await MeetingRoom.findByIdAndUpdate(roomId, { name, capacity, equipments, availability }, { new: true });
+        const { name, capacity, equipment, availability } = req.body; // Corrected field name
+        const updatedMeetingRoom = await MeetingRoom.findByIdAndUpdate(
+            roomId,
+            { name, capacity, equipment, availability }, // Corrected field name
+            { new: true }
+        );
         if (!updatedMeetingRoom) {
             return res.status(404).json({ message: 'Meeting room not found' });
         }
@@ -61,6 +65,7 @@ const updateMeetingRoomById = async (req, res) => {
     }
 };
 
+
 // Delete meeting room by ID
 const deleteMeetingRoomById = async (req, res) => {
     try {
@@ -69,7 +74,9 @@ const deleteMeetingRoomById = async (req, res) => {
         if (!deletedMeetingRoom) {
             return res.status(404).json({ message: 'Meeting room not found' });
         }
+
         res.status(204).send();
+        //res.status(204).json({message: 'Meetting room Deleted successfully'});
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

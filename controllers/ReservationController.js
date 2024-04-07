@@ -2,7 +2,7 @@ const Reservation = require('../models/reservationModel');
 const mongoose = require('mongoose');
 const mailer = require('../mailer/nodemailer');
 const User = require("../models/userModel");
-const Room = require("../models/meetingRoomModel");
+const Room = require("../models/roomsModel");
 
 const badRes = "<h1>Hello</h1>"+
     "<h2>we're sorry to inform you that the  desired room is reserved</h2>"+
@@ -38,17 +38,7 @@ const createReservation = async (req, res) => {
     }
  };
 
-const getUserById = async (req, res,) => {
-    try {
-        const user = await User.findById(req.params.id);
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-        res.json(user);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-}
+
 
 
 const getAllReservations = async (req, res) => {
@@ -100,6 +90,7 @@ const deleteReservation = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 const isRoomReserved = async (roomId, startTimeP, endTimeP) => {
     try {
         // Check if any reservations overlap with the requested time slot
@@ -110,10 +101,9 @@ const isRoomReserved = async (roomId, startTimeP, endTimeP) => {
                 { endTime: { $gt: startTimeP } }
             ]
         });
-
         return overlappingReservations.length > 0;
     } catch (error) {
-        throw new Error('Error checking room availability');
+        console.error("Error in isRoomReserved function:", error);
     }
 };
 

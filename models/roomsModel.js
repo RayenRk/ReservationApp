@@ -10,8 +10,9 @@ const meetingRoomSchema = new mongoose.Schema({
     required: true
   },
   equipment: {
-    type: [String],
-    required: true
+    type: String,
+    required: true,
+    default:null
   },
 
   availability: {
