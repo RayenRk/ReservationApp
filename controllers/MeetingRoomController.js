@@ -13,8 +13,8 @@ const createMeetingRoom = async (req, res) => {
         if (roomExists) {
             return res.status(409).json({ message: 'Room already exists' });
         }
-        const { name, capacity, equipments, availability } = req.body;
-        const newMeetingRoom = await MeetingRoom.create({ name, capacity, equipments, availability });
+        const { name, capacity,equipments,  availability } = req.body; //
+        const newMeetingRoom = await MeetingRoom.create({ name, capacity, equipments, availability }); // 
         res.status(201).json(newMeetingRoom);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -10,12 +10,13 @@ const signup = async (req, res) => {
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
         }
-        const { username, password } = req.body;
+        const { username, email, password } = req.body;
         const userExists = await User.findOne({ username });
         if (userExists) {
             return res.status(409).json({ message: 'Username already exists' });
         }
-        const user = new User({ username, password });
+        const user = new User({ username, email, password }); // Include email here
+        console.log(email)
         await user.save();
         res.status(201).json({ message: 'User created successfully' });
     }
