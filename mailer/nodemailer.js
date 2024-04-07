@@ -5,13 +5,12 @@ dotenv.config();
 
 //const fs = require("fs");
 // async..await is not allowed in global scope, must use a wrapper
-const nodeMailer = async (to) => {
-    if (!to) {
-       // console.log(to + "tooo")
-        //console.error("Email address is undefined or null.");
-        return;
-    }
-    console.log("x"+to.toString());
+const nodeMailer = async (to,html) => {
+    // if (!to) {
+    //    // console.log(to + "tooo")
+    //     //console.error("Email address is undefined or null.");
+    //     return;
+    // }
     // create reusable transporter object using the default SMTP transport
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -28,11 +27,9 @@ const nodeMailer = async (to) => {
         "<p>Thank you</p>";
     const message = {
         from: '"mouheb" ghabrimouheb@gmail.com', // sender address
-        to: to.toString(), // list of receivers
+        to: to, // list of receivers
         subject: "About reservation", // Subject line
-        html: "<h1>Hello</h1>"+
-            "<h2>we're sorry to inform you that the  desired room is reserved</h2>"+
-            "<p>Thank you</p>", // html body
+        html:html , // html body
 
     };
 

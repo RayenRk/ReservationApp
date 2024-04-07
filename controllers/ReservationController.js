@@ -2,76 +2,53 @@ const Reservation = require('../models/reservationModel');
 const mongoose = require('mongoose');
 const mailer = require('../mailer/nodemailer');
 const User = require("../models/userModel");
+const Room = require("../models/meetingRoomModel");
 
-
+const badRes = "<h1>Hello</h1>"+
+    "<h2>we're sorry to inform you that the  desired room is reserved</h2>"+
+    "<p>Thank you</p>";
+const goodRes = "<h1>Hello</h1>"+
+    "<h2>we are happy  to inform you that the  desired room is successfully reserved</h2>"+
+    "<p>Thank you for chosing us</p>";
 
 const createReservation = async (req, res) => {
     try {
-        console.log("Start Time "+req.body.startTime + "End Time "+ req.body.endTime + "RoomID "+req.body.meetingroom + "User" +req.body.user);
-        const userEmail = await User.findById(req.body.user).populate('user')
-        console.log(userEmail)
-        const alert = await isRoomReserved(req.body.meetingroom, req.body.startTime, req.body.endTime);
+        const room = await Room.findById(req.params.roomID);
+        if(!room){
+            console.log("There's no room")
+        }else{
+            const reservation = await new Reservation({
+                meetingRoom : req.params.roomID,
+                user : req.user.id,
+                startTime: req.body.startTime,
+                endTime: req.body.endTime
+            });
+            reservation.save();
+            const alert = await isRoomReserved(req.params.roomID,req.body.startTime,req.body.endTime);
+            if(!alert){
+                await Send(req.user.email,goodRes);
 
-
-        if(alert===true){
-            await Send("slbrankomouheb@gmail.com");
-        }else {
-            await Send("slbrankomouheb@gmail.com");
+            }else{
+                await Send(req.user.email,badRes);
+            }
+            res.status(201).json(reservation);
         }
-        const reservation = await Reservation.create(req.body);
-        res.status(201).json(reservation);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
  };
 
-
-
-// const createReservation = async (req, res) => {
-//     try {
-//         req.body.email = "ghabrimouheb@gmail.com"
-//         console.log("Start Time: " + req.body.startTime + ", End Time: " + req.body.endTime + ", RoomID: " + req.body.meetingroom + ", Email: " + req.body.email);
-//         console.log("maaaaaaaail"+req.body.email);
-//
-//         const alert = await isRoomReserved(req.body.meetingroom, req.body.startTime, req.body.endTime);
-//         console.log("Alert: " + alert);
-//
-//         if (alert) {
-//             await Send(req.body.email);
-//             console.log("maaaaaaaail"+req.body.email);
-//         } else {
-//             console.log("maaaaaaaail"+req.body.email);
-//             console.log("Room is available. Proceeding with reservation.");
-//             await Send(req.body.email);
-//         }
-//
-//         const reservation = await Reservation.create(req.body);
-//         res.status(201).json(reservation);
-//     } catch (error) {
-//         console.error("Error creating reservation:", error);
-//         res.status(500).json({ error: error.message });
-//     }
-// };
-
-const getUserDataById = async (req, res) => {
+const getUserById = async (req, res,) => {
     try {
-        // Assuming you're passing the user ID in the request parameters
-        const userId = req.params.userId;
-
-        // Find the user by ID and populate the relevant fields
-        const userData = await User.findById(userId).populate('user');
-
-        // Check if user data is found
-        if (!userData) {
+        const user = await User.findById(req.params.id);
+        if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
-
-        console.log(userData);
-        res.status(200).json(userData);
+        res.json(user);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-};
+}
 
 
 const getAllReservations = async (req, res) => {
@@ -123,16 +100,14 @@ const deleteReservation = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
-var isRoomReserved = async (roomId, startTime, endTime) => {
+const isRoomReserved = async (roomId, startTimeP, endTimeP) => {
     try {
         // Check if any reservations overlap with the requested time slot
         const overlappingReservations = await Reservation.find({
-            room: roomId,
-            $or: [
-                { $and: [{ startTime: { $lte: startTime } }, { endTime: { $gte: startTime } }] },
-                { $and: [{ startTime: { $lte: endTime } }, { endTime: { $gte: endTime } }] },
-                { $and: [{ startTime: { $gte: startTime } }, { endTime: { $lte: endTime } }] }
+            meetingRoom: roomId,
+            $and: [
+                { startTime: { $lt: endTimeP } },
+                { endTime: { $gt: startTimeP } }
             ]
         });
 
@@ -141,9 +116,8 @@ var isRoomReserved = async (roomId, startTime, endTime) => {
         throw new Error('Error checking room availability');
     }
 };
-    const Send = async (req,res,to) => {
-        await mailer.nodeMailer(to);
-    }
+
+const Send = async (to,html) => { await mailer.nodeMailer(to,html); }
 
 module.exports = {
     getAllReservations,
@@ -152,5 +126,6 @@ module.exports = {
     updateReservation,
     deleteReservation,
     isRoomReserved,
-    Send
+    Send,
+
 };
