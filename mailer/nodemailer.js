@@ -17,7 +17,7 @@ const nodeMailer = async (to,html) => {
         port: 465,
         secure: true, // use TLS
         auth: {
-            user: "ghabrimouheb@gmail.com",
+            user: "mail@gmail.com",
             pass: process.env.SMTP_PWD,
 
         },
@@ -26,7 +26,7 @@ const nodeMailer = async (to,html) => {
         "<h2>we're sorry to inform you that the  desired room is reserved</h2>"+
         "<p>Thank you</p>";
     const message = {
-        from: '"mouheb" ghabrimouheb@gmail.com', // sender address
+        from: '"reservation App" mail@gmail.com', // sender address
         to: to, // list of receivers
         subject: "About reservation", // Subject line
         html:html , // html body
